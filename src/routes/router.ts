@@ -2,6 +2,7 @@ import { ROUTER } from "@commom/constants";
 import Blog from "@pages/Blog";
 import Company from "@pages/Company";
 import DetailCompany from "@pages/DetailCompany";
+import DetailJob from "@pages/DetailJob";
 import DetailUser from "@pages/DetailUser";
 import Jobs from "@pages/Jobs";
 import Service from "@pages/Service";
@@ -14,7 +15,7 @@ export const routerAdmin = [
     { path: ROUTER.COMPANY, element: Company },
     { path: ROUTER.COMPANY_DETAIL, element: DetailCompany },
     { path: ROUTER.JOBS, element: Jobs },
+    { path: ROUTER.DETAIL_JOB, element: DetailJob },
     { path: ROUTER.BLOG, element: Blog },
     { path: ROUTER.SERVICE, element: Service },
 ];
-

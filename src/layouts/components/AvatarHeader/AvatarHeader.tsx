@@ -60,18 +60,6 @@ const AvatarHeader: FC<Props> = (): JSX.Element => {
           }}
           className={`origin-top-right absolute ltr:right-0 rtl:left-0 rounded top-full z-50 py-0.5 ltr:text-left rtl:text-right bg-white dark:bg-gray-800 border dark:border-gray-700 shadow-md`}
           style={{ minWidth: '12rem' }}>
-          <li className='relative group '>
-            <a
-              className='block w-full py-2 px-6 clear-both whitespace-nowrap hover:text-primary-400 cursor-pointer group-hover:opacity-50 '
-              // onClick={_changePassword}
-            >
-              <Cog6ToothIcon className='inline ltr:mr-2 rtl:ml-2 w-4 h-4' />
-              Change Password
-            </a>
-          </li>
-          <li className='relative'>
-            <hr className='border-t border-gray-200 dark:border-gray-700 my-0' />
-          </li>
           <li className='relative group'>
             <a
               className='block w-full py-2 px-6 clear-both whitespace-nowrap hover:text-primary-400 cursor-pointer text-red-600 group-hover:opacity-70'

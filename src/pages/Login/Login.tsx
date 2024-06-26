@@ -113,7 +113,7 @@ const Login: FC<Props> = (): JSX.Element => {
                   error={!!error}
                   variant='standard'>
                   <InputLabel htmlFor='standard-adornment-password'>
-                    Mật khẩu *
+                    Password *
                   </InputLabel>
                   <Input
                     sx={{ backgroundColor: 'rgba(255, 255, 255, 0.01)' }}
@@ -141,13 +141,7 @@ const Login: FC<Props> = (): JSX.Element => {
                 </FormControl>
               )}
             />
-            <div className='flex justify-end'>
-              <span
-                onClick={() => navigate('/auth/forgot-password')}
-                className='text-sm cursor-pointer hover:text-blue-500'>
-                Quên mật khẩu?
-              </span>
-            </div>
+            <div className='flex justify-end'></div>
             <Button
               // typeButton="blue"
               className='mt-6'

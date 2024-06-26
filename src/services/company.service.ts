@@ -33,4 +33,12 @@ const updateCompany = (data: ICompany) => {
 }
 
 
-export { getAllCompany, getCompanyById, updateCompany, createCompany }
+const deleteCompany = (id: string) => {
+    return BaseURL({
+        url: `/company/${id}`,
+        method: "DELETE",
+    });
+}
+
+
+export { getAllCompany, getCompanyById, updateCompany, createCompany, deleteCompany }

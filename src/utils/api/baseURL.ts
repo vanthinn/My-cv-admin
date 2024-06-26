@@ -32,13 +32,15 @@ BaseURL.interceptors.response.use(
                 originalConfig._retry = true;
                 const auth: any = JSON.parse(String(localStorage.getItem("auth")));
                 if (auth) {
-                    const resp = await refreshToken();
-                    if (resp) {
-                        localStorage.setItem('auth', JSON.stringify(resp.data));
-                        const accessToken = resp.data.accessToken;
-                        BaseURL.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-                        return BaseURL(originalConfig);
-                    }
+                    localStorage.removeItem('auth');
+                    console.error("Error refreshing token", error);
+                    // const resp = await refreshToken();
+                    // if (resp) {
+                    //     localStorage.setItem('auth', JSON.stringify(resp.data));
+                    //     const accessToken = resp.data.accessToken;
+                    //     BaseURL.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+                    //     return BaseURL(originalConfig);
+                    // }
                 } else {
                     originalConfig._retry = false;
                 }
@@ -48,21 +50,21 @@ BaseURL.interceptors.response.use(
     }
 );
 
-const refreshToken = async () => {
-    try {
-        const auth: any = JSON.parse(String(localStorage.getItem("auth")));
-        const resp = await BaseURL.get("/auth/refresh", {
-            headers: {
-                Authorization: `Bearer ${auth?.refreshToken}`
-            }
-        });
-        localStorage.setItem('auth', JSON.stringify(resp.data));
-        return resp;
-    } catch (error) {
-        localStorage.removeItem('auth');
-        console.error("Error refreshing token", error);
-        return null;
-    }
-};
+// const refreshToken = async () => {
+//     try {
+//         const auth: any = JSON.parse(String(localStorage.getItem("auth")));
+//         const resp = await BaseURL.get("/auth/refresh", {
+//             headers: {
+//                 Authorization: `Bearer ${auth?.refreshToken}`
+//             }
+//         });
+//         localStorage.setItem('auth', JSON.stringify(resp.data));
+//         return resp;
+//     } catch (error) {
+//         localStorage.removeItem('auth');
+//         console.error("Error refreshing token", error);
+//         return null;
+//     }
+// };
 
 export default BaseURL;

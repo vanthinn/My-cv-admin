@@ -1,3 +1,5 @@
+import { IUser } from "./IUser";
+
 export interface ICompany {
     id?: string;
     displayName: string;
@@ -14,6 +16,7 @@ export interface ICompany {
     _count?: {
         jobs: number
     }
+    users?: IUser[]
 }
 
 // export interface ICompanyRequest {

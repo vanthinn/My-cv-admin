@@ -16,14 +16,6 @@ const getJobById = (params: { jobId: string, userId?: string }) => {
     });
 }
 
-const applyJob = (data: { jobId: string }) => {
-    return BaseURL({
-        url: `/job-apply`,
-        method: "POST",
-        data
-    });
-}
-
 const getJoBApplyByJobId = (data: { id: string, params: any }) => {
     const { id, params } = data;
     return BaseURL({
@@ -48,5 +40,12 @@ const getAllJobApply = (params: any) => {
     });
 }
 
+const deleteJobOffer = (id: string) => {
+    return BaseURL({
+        url: `/job-offer/` + id,
+        method: "DELETE",
+    });
+}
 
-export { getAllJobOffer, getJobById, applyJob, getJoBApplyByJobId, deleteJobApply, getAllJobApply }
+
+export { getAllJobOffer, getJobById, getJoBApplyByJobId, deleteJobApply, getAllJobApply, deleteJobOffer }

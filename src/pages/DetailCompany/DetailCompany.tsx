@@ -8,12 +8,13 @@ import { companyActionSelector, jobActionSelector } from '@store/index'
 import { formatDayVN } from '@utils/functions/formatDay'
 import { useStoreActions } from 'easy-peasy'
 import { FC, useEffect, useState } from 'react'
-import { HiChevronLeft, HiOutlineBookmark } from 'react-icons/hi2'
+import { HiChevronLeft } from 'react-icons/hi2'
 import { useNavigate, useParams } from 'react-router-dom'
+import avatar_default from '../../assets/images/avatar_default.png'
 
 interface Props {}
 
-const DetailCompany: FC<Props> = (props): JSX.Element => {
+const DetailCompany: FC<Props> = (): JSX.Element => {
   const navigate = useNavigate()
   const { id } = useParams()
   const { getCompanyById } = useStoreActions(companyActionSelector)
@@ -85,10 +86,10 @@ const DetailCompany: FC<Props> = (props): JSX.Element => {
           Detail company
         </h4>
 
-        <div className='flex flex-1 w-full gap-8 px-5 py-4 min-h-8 rounded-lg bg-white '>
-          <div className='h-36 w-36 '>
+        <div className='flex flex-1 w-full gap-8 px-5 py-4 min-h-8 rounded-lg bg-white border border-slate-200 mt-2 '>
+          <div className='h-36 w-36 flex-shrink-0 '>
             <img
-              className='object-cover h-full w-full border border-slate-200 rounded-lg'
+              className='object-contain h-full w-full border border-slate-200 rounded-lg'
               src={data?.logoUrl}
               alt={data?.displayName}
             />
@@ -96,13 +97,6 @@ const DetailCompany: FC<Props> = (props): JSX.Element => {
 
           <div className='flex flex-col '>
             <h2 className='text-2xl font-semibold'>{data?.displayName}</h2>
-            <div></div>
-            <div
-              className='mt-1 text-lg text-slate-400 '
-              dangerouslySetInnerHTML={{
-                __html: data?.description || '',
-              }}
-            />
 
             <div className='mt-2 grid grid-cols-2 gap-2'>
               <div className='flex gap-4'>
@@ -131,8 +125,8 @@ const DetailCompany: FC<Props> = (props): JSX.Element => {
             </div>
           </div>
         </div>
-        <div className='mt-8 flex flex-col flex-1 w-full  px-5 py-4 min-h-8 rounded-lg bg-white'>
-          <h4 className='text-xl font-medium'>Company introduction</h4>
+        <div className='mt-8 flex flex-col flex-1 w-full  px-5 py-4 min-h-8 rounded-lg bg-white border border-slate-200'>
+          <h4 className='text-xl font-semibold'>Company introduction</h4>
           <div
             className='mt-2 '
             dangerouslySetInnerHTML={{
@@ -141,8 +135,32 @@ const DetailCompany: FC<Props> = (props): JSX.Element => {
           />
         </div>
 
-        <div className='mt-8 flex flex-col flex-1 w-full  px-5 py-4 min-h-8 rounded-lg bg-white '>
-          <h4 className='text-xl font-medium'>Recruitment</h4>
+        <div className='mt-8 flex flex-col flex-1 w-full  px-5 py-4 min-h-8 rounded-lg bg-white border border-slate-200 '>
+          <h4 className='text-xl font-semibold'>Employers</h4>
+          <div className='grid grid-cols-2 gap-4 mt-2'>
+            {data?.users?.map((item: any, index: number) => (
+              <div
+                key={index}
+                className='px-4 py-2 rounded-md border border-slate-200 flex gap-2 items-center '>
+                <img
+                  className='h-14 w-14 rounded-full border border-slate-200 object-cover'
+                  src={item.avatarUrl || avatar_default}
+                  alt=''
+                />
+                <div className='flex flex-col'>
+                  <h4 className='font-medium'>{item.firstName + ' ' + item.lastName}</h4>
+                  <div className='flex flex-col font-medium text-[13px]'>
+                    <span>Email: {item.email}</span>
+                    <span>Phone: {item.phoneNumber}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className='mt-8 flex flex-col flex-1 w-full  px-5 py-4 min-h-8 rounded-lg bg-white border border-slate-200 '>
+          <h4 className='text-xl font-semibold'>Recruitments</h4>
 
           <div className='mt-2 flex gap-8'>
             <TextFieldV2
@@ -218,13 +236,6 @@ const DetailCompany: FC<Props> = (props): JSX.Element => {
                       <span className='text-red-500'>Deadline: </span>
                       <span className='text-red-500'>{formatDayVN(job.deadline)}</span>
                     </div>
-                    <Tooltip title='Bookmark'>
-                      <div
-                        onClick={(e) => e.preventDefault()}
-                        className='hover:text-blue-600 cursor-pointer'>
-                        <HiOutlineBookmark className='text-xl hover:text-blue-500' />
-                      </div>
-                    </Tooltip>
                   </div>
                 </div>
               ))}

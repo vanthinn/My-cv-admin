@@ -2,8 +2,8 @@ import { useDebounce } from '@hooks/useDebounce'
 import { IUser } from '@interfaces/IUser'
 import { Tooltip } from '@mui/material'
 import { GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
-import { userActionSelector } from '@store/index'
-import { useStoreActions } from 'easy-peasy'
+import { notifyActionSelector, userActionSelector, userStateSelector } from '@store/index'
+import { useStoreActions, useStoreState } from 'easy-peasy'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -11,12 +11,16 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import TextFieldV2 from '@components/TextFieldV2'
 import Table from '@components/Table'
 import { formatDayVN } from '@utils/functions/formatDay'
+import ModalConfirm from '@components/ModalConfirm'
 
 interface Props {}
 
 const User: FC<Props> = (props): JSX.Element => {
   const navigate = useNavigate()
-  const { getAllUser } = useStoreActions(userActionSelector)
+  const { getAllUser, deleteUser, setIsDeleteUserSuccess } =
+    useStoreActions(userActionSelector)
+  const { isDeleteUserSuccess, messageErrorUser } = useStoreState(userStateSelector)
+  const { setNotifySetting } = useStoreActions(notifyActionSelector)
   const [inputSearch, setInputSearch] = useState<string>('')
   const [rowsData, setRows] = useState<IUser[]>([])
   const [rowTotal, setRowTotal] = useState(0)
@@ -32,8 +36,9 @@ const User: FC<Props> = (props): JSX.Element => {
     },
   ])
   const [loading, setLoading] = useState<boolean>(false)
-
-  const getAllJobHome = async () => {
+  const [openModalDelete, setOpenModalDelete] = useState<boolean>(false)
+  const [rowSelected, setRowSelected] = useState<IUser>()
+  const getAllUserHome = async () => {
     setLoading(true)
     const res = await getAllUser({
       skip: paginationModel.page * paginationModel.pageSize,
@@ -55,6 +60,34 @@ const User: FC<Props> = (props): JSX.Element => {
     setInputSearch(value.target.value)
   }
 
+  const handleDelete = async () => {
+    if (rowSelected) {
+      setLoading(true)
+      const res = await deleteUser(rowSelected.id || '')
+      if (res) {
+        setNotifySetting({
+          show: true,
+          status: 'success',
+          message: 'Delete user successful',
+        })
+        getAllUserHome()
+      }
+      setOpenModalDelete(false)
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!isDeleteUserSuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorUser,
+      })
+      setIsDeleteUserSuccess(true)
+    }
+  }, [isDeleteUserSuccess])
+
   const handleSortModelChange = useCallback((newSortModel: GridSortModel) => {
     setSortModel(newSortModel)
   }, [])
@@ -62,7 +95,7 @@ const User: FC<Props> = (props): JSX.Element => {
   const debounced = useDebounce(inputSearch, 500)
 
   useEffect(() => {
-    getAllJobHome()
+    getAllUserHome()
   }, [paginationModel, sortModel, debounced])
 
   const columnsUser = [
@@ -198,7 +231,10 @@ const User: FC<Props> = (props): JSX.Element => {
           />
           <DeleteIcon
             sx={{ color: '#d32f2f', cursor: 'pointer' }}
-            onClick={() => {}}
+            onClick={() => {
+              setRowSelected(params.params.row)
+              setOpenModalDelete(true)
+            }}
           />
         </div>
       </>
@@ -230,6 +266,16 @@ const User: FC<Props> = (props): JSX.Element => {
           totalRow={rowTotal}
         />
       </div>
+
+      {openModalDelete && (
+        <ModalConfirm
+          open={openModalDelete}
+          handleClose={() => {
+            setOpenModalDelete(false)
+          }}
+          handleDelete={handleDelete}
+        />
+      )}
     </>
   )
 }

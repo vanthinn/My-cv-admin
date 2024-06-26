@@ -9,7 +9,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import Table from '../../components/Table'
 import { useNavigate } from 'react-router-dom'
 import { useDebounce } from '../../hooks/useDebounce'
-import { formatDayVN } from '../../utils/functions/formatDay'
 import { ICompany } from '@interfaces/ICompany'
 import Button from '@components/Button/Button'
 import { useStoreActions, useStoreState } from 'easy-peasy'
@@ -19,23 +18,31 @@ import {
   notifyActionSelector,
 } from '@store/index'
 import ModalAddEditCompany from '@components/ModalAddEditCompany/ModalAddEditCompany'
+import ModalConfirm from '@components/ModalConfirm'
 interface Props {}
 
 const Company: FC<Props> = (props): JSX.Element => {
   const navigate = useNavigate()
-  const { messageErrorCompany, isUpdateCompanySuccess, isCreateCompanySuccess } =
-    useStoreState(companyStateSelector)
+  const {
+    messageErrorCompany,
+    isUpdateCompanySuccess,
+    isCreateCompanySuccess,
+    isDeleteCompanySuccess,
+  } = useStoreState(companyStateSelector)
   const {
     updateCompany,
     setIsUpdateCompanySuccess,
     createCompany,
     setIsCreateCompanySuccess,
     getAllCompany,
+    deleteCompany,
+    setIsDeleteCompanySuccess,
   } = useStoreActions(companyActionSelector)
   const { setNotifySetting } = useStoreActions(notifyActionSelector)
   const [inputSearch, setInputSearch] = useState<string>('')
   const [rowsData, setRows] = useState<ICompany[]>([])
   const [rowSelected, setRowSelected] = useState<ICompany>()
+  const [openModalDelete, setOpenModalDelete] = useState<boolean>(false)
   const [rowTotal, setRowTotal] = useState(0)
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -44,7 +51,7 @@ const Company: FC<Props> = (props): JSX.Element => {
 
   const [sortModel, setSortModel] = useState<GridSortModel>([
     {
-      field: 'name',
+      field: 'displayName',
       sort: 'asc',
     },
   ])
@@ -57,6 +64,7 @@ const Company: FC<Props> = (props): JSX.Element => {
       skip: paginationModel.page * paginationModel.pageSize,
       take: paginationModel.pageSize,
       search: inputSearch,
+      order: `${sortModel[0]?.field}:${sortModel[0]?.sort}`,
     })
     if (res) {
       const data = res.data?.map((item: any, index: number) => ({
@@ -100,6 +108,23 @@ const Company: FC<Props> = (props): JSX.Element => {
     setLoading(false)
   }
 
+  const handleDelete = async () => {
+    if (rowSelected) {
+      setLoading(true)
+      const res = await deleteCompany(rowSelected.id || '')
+      if (res) {
+        setNotifySetting({
+          show: true,
+          status: 'success',
+          message: 'Delete company successful',
+        })
+        getAllCompanyHome()
+      }
+      setOpenModalDelete(false)
+      setLoading(false)
+    }
+  }
+
   const handleSortModelChange = useCallback((newSortModel: GridSortModel) => {
     setSortModel(newSortModel)
   }, [])
@@ -120,6 +145,17 @@ const Company: FC<Props> = (props): JSX.Element => {
       setIsUpdateCompanySuccess(true)
     }
   }, [isUpdateCompanySuccess])
+
+  useEffect(() => {
+    if (!isDeleteCompanySuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorCompany,
+      })
+      setIsDeleteCompanySuccess(true)
+    }
+  }, [isDeleteCompanySuccess])
 
   useEffect(() => {
     if (!isCreateCompanySuccess) {
@@ -170,6 +206,7 @@ const Company: FC<Props> = (props): JSX.Element => {
       align: 'left',
       headerAlign: 'left',
       hideable: false,
+      sortable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => (
         <div className='h-full w-12'>
           <img
@@ -187,6 +224,7 @@ const Company: FC<Props> = (props): JSX.Element => {
       flex: 1.2,
       align: 'left',
       headerAlign: 'left',
+      sortable: false,
       hideable: false,
       renderCell: (params: GridRenderCellParams<any, number>) => (
         <p className={`text-black line-clamp-1`}>{params.row.email}</p>
@@ -279,7 +317,10 @@ const Company: FC<Props> = (props): JSX.Element => {
           />
           <DeleteIcon
             sx={{ color: '#d32f2f', cursor: 'pointer' }}
-            onClick={() => {}}
+            onClick={() => {
+              setRowSelected(params.params.row)
+              setOpenModalDelete(true)
+            }}
           />
         </div>
       </>
@@ -333,6 +374,16 @@ const Company: FC<Props> = (props): JSX.Element => {
           setOpen={setIsOpenModalAddEdit}
           company={rowSelected || null}
           handleAction={handleAction}
+        />
+      )}
+
+      {openModalDelete && (
+        <ModalConfirm
+          open={openModalDelete}
+          handleClose={() => {
+            setOpenModalDelete(false)
+          }}
+          handleDelete={handleDelete}
         />
       )}
     </>

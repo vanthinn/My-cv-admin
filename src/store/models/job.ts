@@ -1,5 +1,5 @@
 import { Action, Thunk, action, persist, thunk } from "easy-peasy";
-import { applyJob, deleteJobApply, getAllJobApply, getAllJobOffer, getJoBApplyByJobId, getJobById } from "../../services/job.service";
+import { deleteJobApply, deleteJobOffer, getAllJobApply, getAllJobOffer, getJoBApplyByJobId, getJobById } from "../../services/job.service";
 
 export interface IJobModel {
     //MessageError
@@ -16,11 +16,6 @@ export interface IJobModel {
     setIsGetJobByIdSuccess: Action<IJobModel, boolean>;
     getJobById: Thunk<IJobModel, { jobId: string, userId?: string }>;
 
-    //ApplyJob
-    isApplyJobSuccess: boolean;
-    setIsApplyJobSuccess: Action<IJobModel, boolean>;
-    applyJob: Thunk<IJobModel, { jobId: string }>;
-
     //deleteJobApply
     isDeleteJobApplySuccess: boolean;
     setIsDeleteJobApplySuccess: Action<IJobModel, boolean>;
@@ -35,6 +30,11 @@ export interface IJobModel {
     isGetAllJobApplySuccess: boolean;
     setIsGetAllJobApplySuccess: Action<IJobModel, boolean>;
     getAllJobApply: Thunk<IJobModel, any>;
+
+    //deleteJobOffer
+    isDeleteJobOfferSuccess: boolean;
+    setIsDeleteJobOfferSuccess: Action<IJobModel, boolean>;
+    deleteJobOffer: Thunk<IJobModel, string>;
 }
 
 export const jobModel: IJobModel = persist({
@@ -73,23 +73,6 @@ export const jobModel: IJobModel = persist({
             })
             .catch((error) => {
                 actions.setIsGetJobByIdSuccess(false)
-                actions.setMessageErrorJob(error?.response?.data?.message)
-            });
-    }),
-
-    //GetJobById
-    isApplyJobSuccess: true,
-    setIsApplyJobSuccess: action((state, payload) => {
-        state.isApplyJobSuccess = payload;
-    }),
-    applyJob: thunk(async (actions, payload) => {
-        return applyJob(payload)
-            .then(async (res) => {
-                actions.setIsApplyJobSuccess(true)
-                return res;
-            })
-            .catch((error) => {
-                actions.setIsApplyJobSuccess(false)
                 actions.setMessageErrorJob(error?.response?.data?.message)
             });
     }),
@@ -145,4 +128,19 @@ export const jobModel: IJobModel = persist({
             });
     }),
 
+    isDeleteJobOfferSuccess: true,
+    setIsDeleteJobOfferSuccess: action((state, payload) => {
+        state.isDeleteJobOfferSuccess = payload;
+    }),
+    deleteJobOffer: thunk(async (actions, payload) => {
+        return deleteJobOffer(payload)
+            .then(async (res) => {
+                actions.setIsDeleteJobOfferSuccess(true)
+                return res;
+            })
+            .catch((error) => {
+                actions.setIsDeleteJobOfferSuccess(false)
+                actions.setMessageErrorJob(error?.response?.data?.message)
+            });
+    }),
 })

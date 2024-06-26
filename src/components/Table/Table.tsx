@@ -23,7 +23,6 @@ const Table = ({
   onSortModelChange,
   paginationModel,
   onPaginationModelChange,
-  setRowSelected,
 }: IProps) => {
   return (
     <Box sx={{ mt: '8px', width: '100%', backgroundColor: '#fff' }}>
@@ -59,7 +58,7 @@ const Table = ({
         hideFooterPagination={false}
         pageSizeOptions={[10]}
         paginationModel={paginationModel}
-        // paginationMode='server'
+        paginationMode='server'
         onPaginationModelChange={onPaginationModelChange}
         // onRowSelectionModelChange={(ids) => {
         //   const selectedIDs = new Set(ids)

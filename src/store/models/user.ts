@@ -1,7 +1,7 @@
 // import { postImage } from '../../services/image.service';
 import { IUser } from "@interfaces/IUser";
 import { persist, action, Action, thunk, Thunk } from "easy-peasy";
-import { getAllUser, getCurrentUser, getUserById } from "../../services/user.service";
+import { deleteUser, getAllUser, getCurrentUser, getUserById } from "../../services/user.service";
 import { postImage } from "../../services/image.service";
 
 export interface IUserModel {
@@ -34,6 +34,11 @@ export interface IUserModel {
     // isEditUserSuccess: boolean;
     // setIsEditUserSuccess: Action<IUserModel, boolean>;
     // editEdit: Thunk<IUserModel, IUserEdit>;
+
+    //deleteUser
+    isDeleteUserSuccess: boolean;
+    setIsDeleteUserSuccess: Action<IUserModel, boolean>;
+    deleteUser: Thunk<IUserModel, string>;
 }
 export const userModel: IUserModel = persist({
     //MessageError
@@ -115,20 +120,20 @@ export const userModel: IUserModel = persist({
             });
     }),
 
-    //editUser
-    // isEditUserSuccess: true,
-    // setIsEditUserSuccess: action((state, payload) => {
-    //     state.isEditUserSuccess = payload;
-    // }),
-    // editEdit: thunk(async (actions, payload) => {
-    //     return editUser(payload)
-    //         .then(async (res) => {
-    //             actions.setIsEditUserSuccess(true)
-    //             return res;
-    //         })
-    //         .catch((error) => {
-    //             actions.setIsEditUserSuccess(false)
-    //             actions.setMessageErrorUser(error?.response?.data?.message)
-    //         });
-    // }),
+    //deleteUser
+    isDeleteUserSuccess: true,
+    setIsDeleteUserSuccess: action((state, payload) => {
+        state.isDeleteUserSuccess = payload;
+    }),
+    deleteUser: thunk(async (actions, payload) => {
+        return deleteUser(payload)
+            .then(async (res) => {
+                actions.setIsDeleteUserSuccess(true)
+                return res;
+            })
+            .catch((error) => {
+                actions.setIsDeleteUserSuccess(false)
+                actions.setMessageErrorUser(error?.response?.data?.message)
+            });
+    }),
 })

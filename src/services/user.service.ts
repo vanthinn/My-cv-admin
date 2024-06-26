@@ -22,5 +22,12 @@ const getUserById = (id: string) => {
     });
 }
 
+const deleteUser = (id: string) => {
+    return BaseURL({
+        url: `/users/` + id,
+        method: "DELETE",
+    });
+}
 
-export { getCurrentUser, getAllUser, getUserById }
+
+export { getCurrentUser, getAllUser, getUserById, deleteUser }

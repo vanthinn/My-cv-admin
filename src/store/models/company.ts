@@ -1,5 +1,5 @@
 import { persist, action, Action, Thunk, thunk } from "easy-peasy";
-import { createCompany, getAllCompany, getCompanyById, updateCompany } from "../../services/company.service";
+import { createCompany, deleteCompany, getAllCompany, getCompanyById, updateCompany } from "../../services/company.service";
 import { ICompany } from "@interfaces/ICompany";
 
 export interface ICompanyModel {
@@ -30,6 +30,11 @@ export interface ICompanyModel {
     isUpdateCompanySuccess: boolean;
     setIsUpdateCompanySuccess: Action<ICompanyModel, boolean>;
     updateCompany: Thunk<ICompanyModel, ICompany>;
+
+    //deleteCompany
+    isDeleteCompanySuccess: boolean;
+    setIsDeleteCompanySuccess: Action<ICompanyModel, boolean>;
+    deleteCompany: Thunk<ICompanyModel, string>;
 }
 
 export const companyModel: ICompanyModel = persist({
@@ -107,6 +112,22 @@ export const companyModel: ICompanyModel = persist({
             })
             .catch((error) => {
                 actions.setIsUpdateCompanySuccess(false)
+                actions.setMessageErrorCompany(error?.response?.data?.message)
+            });
+    }),
+
+    isDeleteCompanySuccess: true,
+    setIsDeleteCompanySuccess: action((state, payload) => {
+        state.isDeleteCompanySuccess = payload;
+    }),
+    deleteCompany: thunk(async (actions, payload) => {
+        return deleteCompany(payload)
+            .then(async (res) => {
+                actions.setIsDeleteCompanySuccess(true)
+                return res;
+            })
+            .catch((error) => {
+                actions.setIsDeleteCompanySuccess(false)
                 actions.setMessageErrorCompany(error?.response?.data?.message)
             });
     }),
